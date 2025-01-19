@@ -7,7 +7,6 @@ $category_obj = \helper\category::find_category_by_slug($slug, 'product');
 if (!$category_obj) {
     load_response()->redirect('/');
 }
-
 $metdata = json_decode($category_obj->metadata);
 
 $thumb = $domain_url . \helper\options::options_by_key_type('logo');
@@ -112,7 +111,7 @@ echo \helper\themes::get_layout('header', array('custom' => $custom));
 										<button type="button" class="ex_close btn">X</button>
 										<div class="choosedfilter" id="choosedfilter"></div>
 										<?php
-										 $filter = \helper\category::get_filter_group_show_total();
+										 $filter = \helper\category::get_filter_group_show_total_nmt();
 										 echo $filter; 
 										?>
 									</div>
@@ -120,7 +119,7 @@ echo \helper\themes::get_layout('header', array('custom' => $custom));
                             </li>
 						
                             <?php
-                            $filter = \helper\category::get_filter_group();
+                            $filter = \helper\category::get_filter_group_nmt();
                             echo $filter;
                             ?>
                             <li class="filter-item">
@@ -141,6 +140,31 @@ echo \helper\themes::get_layout('header', array('custom' => $custom));
 
                     </div>
                     <div class="woocommerce-notices-wrapper"></div>
+					<div class="products-header-listcat">
+						<?php
+						$categories = \helper\category::get_categories_with_image();
+						if (!empty($categories)) {
+							echo '<div class="lst-quicklink ">';
+							foreach ($categories as $category) {
+								if($category->ancestry == '43'){
+									// Lấy các giá trị cần thiết từ danh mục
+									$id = $category->id;
+									$name = $category->name;
+									$slug = $category->slug;
+									$image = $category->image; // Đảm bảo trường 'image' chứa đường dẫn tới ảnh
+									// Tạo thẻ <a> và <img>
+									echo '<a class="box-quicklink__item" href="' . $slug . '" title="' . $name . '">';
+									echo '<i class="quick-link-icon"></i>';
+									echo '<img src="' . $image . '" alt="' . $name . '" />';
+									echo '</a>';
+								}
+							}
+							echo '</div>';
+						} else {
+							echo "Không có danh mục nào có image.";
+						}
+						?>
+					</div>
                     <div id="product_container">
                         <?php
                         $product_category_limit = \helper\options::options_by_key_type('product_category_limit', 'display');

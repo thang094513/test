@@ -390,7 +390,7 @@ public static function get_filter_group_nmt($taxonomy = 'product') {
 				
 				foreach ($filter_group_list as $filter_group) {
 					if ($filter_group->id == '43' && !in_array($slug, ['laptop-moi', 'laptop-cu'])) {
-						$result .= "<li class='filter-item filter-item-hang nmt ".$slug."'>";
+						$result .= "<li class='filter-item filter-item-hang nmt ".$filter_group->slug."'>";
 						$result .= " <div class='arrow-filter'></div>";
 						$result .= '  <div class="filter-item__title"><div class="arrow-filter"></div> <span>' . $filter_group->name . '</span></div>';
 						$result .= ' <div class="filter-option" style="display: none;"><div><div class="filter-childs">';
@@ -487,7 +487,7 @@ private static function get_listcheckbox_filter_item_hang_nmt($category_child_it
             if (!empty($image_html)) {
 				 $des .='<i class="quick-link-icon"></i>';
                 $des .= $image_html; // Chỉ hiển thị hình ảnh
-				$des .= $child_items->name;
+				$des .= '<span class="text">'.$child_items->name.'</span>';
             } else {
                 $des .= $child_items->name; // Hiển thị văn bản nếu không có hình ảnh
             }
