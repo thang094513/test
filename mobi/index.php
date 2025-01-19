@@ -1,7 +1,7 @@
 <?php
 $page = ($_GET['page'] != null && (int) $_GET['page'] > 0) ? (int) $_GET['page'] : 1;
 $domain_url = \helper\options::options_by_key_type('base_url');
-$theme_url = '/' . get_config('root_theme') . "/" . \helper\options::options_by_key_type('index_theme');
+$theme_url = \helper\url::theme_url();
 $category_obj = \helper\category::find_category_by_slug($slug, 'product');
 
 if (!$category_obj) {
@@ -23,8 +23,8 @@ $faceseodata = array(
     'thumbfacebook' => $thumb,
     'urlfacebook' => $url,
     'desfacebook' => $meta_description
-); 
-
+);
+$filter = $_GET['$filter'] ? $_GET['$filter'] : '';
 $sort = $_GET['sort'] ? $_GET['sort'] : '';
 $custom = \helper\themes::get_layout('metadata', $faceseodata);
 
@@ -39,7 +39,7 @@ echo \helper\themes::get_layout('header', array('custom' => $custom));
     </div>
     <div class="container">
         <div class="row ex_lproducts">
-            <div id="primary" class="content-area ">
+            <div id="primary" class="content-area">
                 <main id="main" class="site-main site-main-nmt" role="main">
                     <div id="slider_danh_muc" class="owl-carousel owl-theme">
                     </div>
@@ -50,24 +50,55 @@ echo \helper\themes::get_layout('header', array('custom' => $custom));
                     <?php
                     $menu_category_data = \helper\menu::find_menu_by_menugroup('menu_category');
                     $menu_category = \helper\menu::to_menu_directory_style($menu_category_data);
-                    ?> 
-                    <div class="ex_dmc">
+					
+					//lấy sub menu cho category hiẹn tại
+					$menu_for_category_name = 'menu_'.$category_obj->name;
+                    $menu_for_category_data = \helper\menu::find_menu_by_menugroup($menu_for_category_name);
+                    $menu_for_category = \helper\menu::to_menu_directory_style($menu_for_category_data);
+					
+					
+                    ?>
+					<!-- hiển thị menu cho category -->
+					<div class="ex_dmc">
                         <div class="menu-menu-dienthoai-container">
                             <ul id="menu-menu-dienthoai" class="menu">
                                 <?php foreach ($menu_category as $m_category): ?>
                                     <li class="menu-item menu-item-type-taxonomy menu-item-object-product_cat current-menu-item">
-                                        <a href="<?php echo $m_category->url; ?>" aria-current="page">
-                                            <?php echo $m_category->title; ?>    
-                                        </a>
-                                    </li>
+                                        <a href="<?php echo $m_category->url; ?>" aria-current="page"><?php echo $m_category->title;?></a></li>
                                 <?php endforeach; ?> 
                             </ul>
                         </div>   
                     </div>
-                    <div class="ex_locsp">
-						<h1 class="woocommerce-products-header__title page-title"><?php echo $category_obj->name; ?> <span style="text-transform: uppercase;"><?php if(isset($_REQUEST['filter']) && $_REQUEST['filter']){ echo $_REQUEST['filter'];}  ?></span></h1>
-		
-                        <ul id="filter_product" class="ex_filter ex_sapxep">
+					<!-- end menu cho category -->
+					<? if($menu_for_category):?>
+					<!-- hiển thị menu con cho category -->
+					<div class="ex_locsp">
+						<div class="sclr" style="width: 520px;">
+							<?php foreach ($menu_for_category as $m_for_category): ?>
+							<a href="<?php echo $m_for_category->url; ?>"><?php echo $m_for_category->title;?></a>
+							<?php endforeach; ?> 
+						</div>
+					</div>
+					<!-- end hiển thị menu con cho category 
+                    <div class="ex_dmc">
+                        <div class="menu-menu-dienthoai-container">
+                            <ul id="menu-menu-dienthoai" class="menu">
+                                <?php foreach ($menu_for_category as $m_for_category): ?>
+                                    <li class="menu-item menu-item-type-taxonomy menu-item-object-product_cat current-menu-item">
+                                        <a href="<?php echo $m_for_category->url; ?>" aria-current="page"><?php echo $m_for_category->title;?></a></li>
+                                <?php endforeach; ?> 
+                            </ul>
+                        </div>   
+                    </div>
+					<? endif;?>
+					<!-- end menu for category -->
+                    <div class="ex_cattitle">
+                        <h1 class="woocommerce-products-header__title page-title"><?php echo $category_obj->name; ?> <span style="text-transform: uppercase;"><?php if(isset($_REQUEST['filter']) && $_REQUEST['filter']){ echo $_REQUEST['filter'];}  ?></span></h1>
+
+                    </div>
+                    <div class="scrolling_inner">
+                        <ul id="filter_product" class="ex_filter ex_sapxep box-filter">
+						
 							<li class="filter-item filter-all">
                                 <div class="filter-item__title filter-item__title_show-total">
                                     <div class="arrow-filter"></div>
@@ -76,20 +107,20 @@ echo \helper\themes::get_layout('header', array('custom' => $custom));
                                 </div>
 								<div class="overlay" style="display: none;"></div>
                                 <div class="filter-option filter-total show-total" style="display: none;">
+									
 									<div class="show-total-main">
 										<button type="button" class="ex_close btn">X</button>
 										<div class="choosedfilter" id="choosedfilter"></div>
 										<?php
-										 $filter = \helper\category::get_filter_group_show_total_nmt();
+										 $filter = \helper\category::get_filter_group_show_total();
 										 echo $filter; 
 										?>
 									</div>
                                 </div>
                             </li>
-							
 						
                             <?php
-                            $filter = \helper\category::get_filter_group_nmt();
+                            $filter = \helper\category::get_filter_group();
                             echo $filter;
                             ?>
                             <li class="filter-item">
@@ -106,36 +137,10 @@ echo \helper\themes::get_layout('header', array('custom' => $custom));
                             </li>
                         </ul>
                     </div>
-                    <!-- <div class="choosedfilter" id="choosedfilter">
+                    <div class="choosedfilter" id="choosedfilter">
 
-                    </div> end choosedfilter -->
-					<div class="products-header-listcat">
-						<?php
-						$categories = \helper\category::get_categories_with_image();
-						if (!empty($categories)) {
-							echo '<div class="lst-quicklink ">';
-							foreach ($categories as $category) {
-								if($category->ancestry == '43'){
-									// Lấy các giá trị cần thiết từ danh mục
-									$id = $category->id;
-									$name = $category->name;
-									$slug = $category->slug;
-									$image = $category->image; // Đảm bảo trường 'image' chứa đường dẫn tới ảnh
-									// Tạo thẻ <a> và <img>
-									echo '<a class="box-quicklink__item" href="' . $slug . '" title="' . $name . '">';
-									echo '<i class="quick-link-icon"></i>';
-									echo '<img src="' . $image . '" alt="' . $name . '" />';
-									echo '</a>';
-								}
-							}
-							echo '</div>';
-						} else {
-							echo "Không có danh mục nào có image.";
-						}
-						?>
-					</div>
-                   
-				   <div class="woocommerce-notices-wrapper"></div>
+                    </div>
+                    <div class="woocommerce-notices-wrapper"></div>
                     <div id="product_container">
                         <?php
                         $product_category_limit = \helper\options::options_by_key_type('product_category_limit', 'display');
@@ -161,13 +166,14 @@ if (filter) {
 	};
 	var filter_text = '<a class="remove-filter" data-id="' + filter + '"> <h2>' + filter + '</h2></a>';
 	$(".choosedfilter").html(filter_text);
+	// $(".filter-item-hang").html('');
+	// $(".count-item-hang").html('');
 }
 });
-
     window.addEventListener("DOMContentLoaded", function () {
         filter_product();
-
     });
+	
     function filter_product() {
 		$(".filter").click(function (e) {
             if ((e.target).tagName == 'INPUT')
@@ -194,10 +200,13 @@ if (filter) {
 			if(filter==''){
 				$('.btn.filter').removeClass('active');
 			}
-            if(filter){					
+            if(filter){
                 $.each(filter, function (index, value){
-				
-                    if (index != 0 || filter_terms != '') {
+					if (filter_terms != '') {
+						//dư 1 dấu phẩy ở đây
+                        //filter_terms += ","
+					}
+                    if (index != 0) {
                         filter_terms += ","
                     }
 					$('.btn.filter').removeClass('active');
@@ -206,8 +215,7 @@ if (filter) {
 							$('.btn.filter.' + value.id).addClass('active');
 						}
 					});
-					
-                     filter_terms += value.id ;
+                    filter_terms += value.id;
                     filter_text += '<a class="remove-filter" data-id="' + value.id + '" href="/' + value.id + '"> <h2>' + value.name + '</h2> <i class="fa fa-times"></i> </a>';
                 });
                 filter_text += ' <a class="reset" href="/<?php echo $category_obj->slug; ?>">Xóa tất cả<i class="fa fa-times"></i></a>';
@@ -232,10 +240,8 @@ if (filter) {
 
 
     }
-    function load_filter_product() {
-		
+    function load_filter_product() { 
         var filter_terms = $("#filter_terms").val();
-		
         var sort = $("#sort_by").val();
         if ($('#load_more').length) {
             $("#mansory-media").infiniteScroll('destroy');
@@ -261,21 +267,16 @@ if (filter) {
     function checkboxValue()
     {
         var value = [];
-		// $("#filter_product .filter-option").show();  // Hiển thị tất cả các phần tử .filter-option
-
         $("#filter_product").find('input[class=filter_box][type=checkbox]:checked').each(function (i) {
-
             var id = $(this).val();
             var name = $(this).data('name');
             value.push({'id': id, 'name': name});
-		
         });
-		
         return value;
     }
 
     //
-    function load_data(page, limit, category, filter, sort, main_contain_id) { 
+    function load_data(page, limit, category, filter, sort, main_contain_id) {
         jQuery(".loadingpost").show();
         var metadataload = {};
         metadataload.page = page;
@@ -321,6 +322,8 @@ $(document).click(function(e) {
     }
 });
 
-
 </script>
+
+
 <?php echo \helper\themes::get_footer(); ?>
+ 
