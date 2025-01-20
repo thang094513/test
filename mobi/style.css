@@ -953,11 +953,11 @@ label.ex_khuyenmai{
     line-height: 1.4;
     overflow: hidden;
     text-overflow: ellipsis;
-    padding: 10px 0px 5px 0px;
+    padding: 10px 0px 0px 0px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
-    height: 50px;
+    /* height: 50px; */
     margin-bottom: 0px;
 }
 .ex_p2 .price,
@@ -4558,9 +4558,9 @@ span.filter:hover{
     position: initial;
 }
 .site-main-nmt .choosedfilter{
-	margin: 0;
+	margin: 10px;
 }
-.hang-san-xuat .filter-option .filter-childs .text{
+.hang-san-xuat .filter-option .filter-childs .text ,.hang-san-xuat .filter-list .text{
 	display:none;
 }
 .site-main-nmt .filter-option .filter-childs span{
