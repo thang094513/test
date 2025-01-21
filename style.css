@@ -5121,12 +5121,14 @@ span.filter:hover{
  .hang-san-xuat .box-quicklink__item .text{
 	display :none !important;
 }
-.site-main-nmt .filter-option .filter-childs span .text {
-    border: none;
+.category_child .box-name{
+	background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 10px 10px;
+    margin-right: 5px;
 }
-.site-main-nmt .filter-option .filter-childs span {
-    display: block;
-    line-height: 1.5;
-    margin: 0px;
-    padding: 5px;
+.category_child{
+	margin: 10px 0;
 }

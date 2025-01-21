@@ -3,7 +3,11 @@ $page = ($_GET['page'] != null && (int) $_GET['page'] > 0) ? (int) $_GET['page']
 $domain_url = \helper\options::options_by_key_type('base_url');
 $theme_url = \helper\url::theme_url();
 $category_obj = \helper\category::find_category_by_slug($slug, 'product');
-
+?><style>
+.category_child{display:none;}
+.category_child_<?=$slug?>{display:block;}
+</style>
+<?php
 if (!$category_obj) {
     load_response()->redirect('/');
 }
@@ -136,9 +140,7 @@ echo \helper\themes::get_layout('header', array('custom' => $custom));
                             </li>
                         </ul>
                     </div>
-                    <div class="choosedfilter" id="choosedfilter">
-
-                    </div>
+                     <!-- <div class="choosedfilter" id="choosedfilter"> </div>-->
                     <div class="woocommerce-notices-wrapper"></div>
 					<div class="products-header-listcat">
 						<?php
@@ -157,6 +159,32 @@ echo \helper\themes::get_layout('header', array('custom' => $custom));
 									echo '<i class="quick-link-icon"></i>';
 									echo '<img src="' . $image . '" alt="' . $name . '" />';
 									echo '</a>';
+								}
+							}
+							echo '</div>';
+							echo '<div class="lst-quicklink_1">';
+							foreach ($categories as $category) {
+								if($category->ancestry == '43'){
+									if($category->child ){
+										$desired_category_ids = $category->child;
+										$desired_category_ids_array = explode(',', $desired_category_ids);
+											if (isset($desired_category_ids_array) && !empty($desired_category_ids_array) && is_array($desired_category_ids_array)) {
+												$category_ids = $desired_category_ids_array;
+												echo '<div class="category_child category_child_'.$category->slug.'">';
+												foreach ($category_ids as $id) {
+													if (isset($id)) {
+														$categories_with_links = \helper\category::find_category($id);
+														$id = $categories_with_links->id;
+														$name = $categories_with_links->name;
+														$slug = $categories_with_links->slug;
+														echo '<a class="box-name" href="?filter='. $slug . '" title="' . $name . '">';
+														echo '<span class="text">'.$name.'</span>';
+														echo '</a>';
+													}
+												}
+												echo '</div>';
+											}
+										}
 								}
 							}
 							echo '</div>';
