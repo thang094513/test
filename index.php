@@ -3,9 +3,12 @@ $page = ($_GET['page'] != null && (int) $_GET['page'] > 0) ? (int) $_GET['page']
 $domain_url = \helper\options::options_by_key_type('base_url');
 $theme_url = '/' . get_config('root_theme') . "/" . \helper\options::options_by_key_type('index_theme');
 $category_obj = \helper\category::find_category_by_slug($slug, 'product');
-?><style>
+$fiterrequest =  $_REQUEST['filter'];
+?>
+
+<style>
 .category_child{display:none;}
-.category_child_<?=$slug?>{display:block;}
+.category_child_<?=$fiterrequest?>{display:block;}
 </style>
 <?php
 if (!$category_obj) {
@@ -126,7 +129,7 @@ echo \helper\themes::get_layout('header', array('custom' => $custom));
 									$slug = $category->slug;
 									$image = $category->image; // Đảm bảo trường 'image' chứa đường dẫn tới ảnh
 									// Tạo thẻ <a> và <img>
-									echo '<a class="box-quicklink__item" href="' . $slug . '" title="' . $name . '">';
+									echo '<a class="box-quicklink__item" href="?filter='. $slug . '" title="' . $name . '">';
 									echo '<i class="quick-link-icon"></i>';
 									echo '<img src="' . $image . '" alt="' . $name . '" />';
 									echo '</a>';
@@ -138,6 +141,7 @@ echo \helper\themes::get_layout('header', array('custom' => $custom));
 								if($category->ancestry == '43'){
 									if($category->child ){
 										$desired_category_ids = $category->child;
+										$desired_category_slug = $category->slug;
 										$desired_category_ids_array = explode(',', $desired_category_ids);
 											if (isset($desired_category_ids_array) && !empty($desired_category_ids_array) && is_array($desired_category_ids_array)) {
 												$category_ids = $desired_category_ids_array;
@@ -148,9 +152,8 @@ echo \helper\themes::get_layout('header', array('custom' => $custom));
 														$id = $categories_with_links->id;
 														$name = $categories_with_links->name;
 														$slug = $categories_with_links->slug;
-														echo '<a class="box-name" href="?filter='. $slug . '" title="' . $name . '">';
-														echo '<span class="text">'.$name.'</span>';
-														echo '</a>';
+														$product_category_limit = \helper\options::options_by_key_type('product_category_limit', 'display');
+														echo '<a href="#" class="load-data-link box-name" data-page="'.$page.'" data-limit="'.$product_category_limit.'" data-category="'.$desired_category_slug.'" data-filter="'.$category_obj->slug.','.$desired_category_slug.','.$slug.'" data-sort="'.$sort.'"><span class="text">'.$name.'</span></a>';
 													}
 												}
 												echo '</div>';
@@ -183,6 +186,17 @@ $filter = isset($_REQUEST['filter']) ? $_REQUEST['filter'] : '';
 ?>
 <script>
 $(document).ready(function() {
+$('a.load-data-link').on('click', function (event) {
+	event.preventDefault(); 
+	$('a.load-data-link').removeClass('action'); 
+	$(this).addClass('action');
+	var page = $(this).data('page') || 1;
+	var limit = $(this).data('limit') || 10;
+	var category = $(this).data('category') || '';
+	var filter = $(this).data('filter') || ''; 
+	var sort = $(this).data('sort') || ''; 
+	load_data(page, limit, category, filter, sort, '#product_container');
+});
 var filter = "<?php echo $filter; ?>";
 if (filter) {
 	var value = {

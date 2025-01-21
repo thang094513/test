@@ -953,11 +953,11 @@ label.ex_khuyenmai{
     line-height: 1.4;
     overflow: hidden;
     text-overflow: ellipsis;
-    padding: 10px 0px 5px 0px;
+    padding: 10px 0px 0px 0px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
-    height: 50px;
+    /* height: 50px; */
     margin-bottom: 0px;
 }
 .ex_p2 .price,
@@ -4558,9 +4558,9 @@ span.filter:hover{
     position: initial;
 }
 .site-main-nmt .choosedfilter{
-	margin: 0;
+	margin: 10px;
 }
-.hang-san-xuat .filter-option .filter-childs .text{
+.hang-san-xuat .filter-option .filter-childs .text ,.hang-san-xuat .filter-list .text{
 	display:none;
 }
 .site-main-nmt .filter-option .filter-childs span{
@@ -4602,7 +4602,6 @@ span.filter:hover{
 ::-webkit-scrollbar-corner {
     background: #f1f1f1; /* Match the track background */
 }
-
 .category_child .box-name{
 	background-color: #fff;
     border: 1px solid #e0e0e0;
@@ -4612,7 +4611,7 @@ span.filter:hover{
     margin-right: 5px;
 }
 .category_child{
-	margin: 10px;
+	margin: 10px 0;
 	padding: 10px 0;
 }
 .lst-quicklink_1{

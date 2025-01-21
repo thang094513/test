@@ -5121,6 +5121,15 @@ span.filter:hover{
  .hang-san-xuat .box-quicklink__item .text{
 	display :none !important;
 }
+.site-main-nmt .filter-option .filter-childs span .text {
+    border: none;
+}
+.site-main-nmt .filter-option .filter-childs span {
+    display: block;
+    line-height: 1.5;
+    margin: 0px;
+    padding: 5px;
+}
 .category_child .box-name{
 	background-color: #fff;
     border: 1px solid #e0e0e0;
