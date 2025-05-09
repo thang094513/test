@@ -93,8 +93,6 @@ echo \helper\themes::get_layout('header', array('custom' => $custom));
 									</div>
                                 </div>
                             </li>
-							
-						
                             <?php
                             $filter = \helper\category::get_filter_group_nmt();
                             echo $filter;
